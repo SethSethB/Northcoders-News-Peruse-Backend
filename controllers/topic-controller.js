@@ -31,8 +31,8 @@ exports.addArticle = (req, res, next) => {
     }
     return Article.create(newArticle)
   })
-  .then( populatedArticle => {
-    return res.status(201).send(populatedArticle)
+  .then( articleDoc => {
+    return res.status(201).send(articleDoc)
   })
   .catch(err => {
     if(err.name === 'ValidationError') next({status: 400})
