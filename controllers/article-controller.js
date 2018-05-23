@@ -19,10 +19,8 @@ exports.getArticleById = (req, res, next) => {
     res.send(article)
   })
   .catch(err => {
-    console.log(err.name, '***********************')
     if(err.name === 'CastError') next({status: 400})
     else next({status: 500})
-    console.log(err)
   })
 }
 

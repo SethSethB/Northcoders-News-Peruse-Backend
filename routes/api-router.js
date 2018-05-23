@@ -11,8 +11,8 @@ router.get("/", (req, res, next) => {
 
 router.use("/topics", topicRouter);
 router.use("/articles", articleRouter);
-// router.use("/comments", commentRouter);
-// router.use("/users", userRouter);
+router.use("/comments", commentRouter);
+router.use("/users", userRouter);
 
 router.get("/*", (req, res, next) => {
   next({ status: 404 });
