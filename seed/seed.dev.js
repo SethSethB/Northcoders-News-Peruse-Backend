@@ -7,7 +7,6 @@ const { DB_URL }  = require('../config');
 mongoose.connect(DB_URL)
   .then(() => seedDB())
   .then((someData) => {
-    console.log(someData)
     console.log(`Database sucessfully seeded with ${someData.length} docs`)
     return mongoose.disconnect();
   })

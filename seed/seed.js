@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const { Article, Comment, Topic, User } = require('../models');
-const { formatArticleData } = require('../utils')
+const { Article, ArticleComment, Topic, User } = require('../models');
+const { formatArticleData, formatCommentData } = require('../utils')
 const dataSet = process.env.NODE_ENV === 'test' ? 'testData' : 'devData';
 
 const articleData = require(`./${dataSet}/articles.json`);
@@ -16,19 +16,16 @@ function seedDB () {
         return Promise.all([Topic.insertMany(topicData), User.insertMany(userData)])
     })
     .then(([topicDocs, userDocs]) => {
-        return Article.insertMany(formatArticleData(articleData, userDocs))
+        console.log(`Database sucessfully seeded with ${topicDocs.length} topic docs`)
+        console.log(`Database sucessfully seeded with ${userDocs.length} user docs`)
+        return Promise.all([Article.insertMany(formatArticleData(articleData, userDocs)), userDocs])
     })
-    .then((articleDocs) => {
-        console.log(articleDocs)
+    .then(([articleDocs, userDocs]) => {
+        console.log(`Database sucessfully seeded with ${articleDocs.length} article docs`)
+        return ArticleComment.insertMany(formatCommentData(commentData, articleDocs, userDocs))
     })
-  
-
-//SEED ARTICLES
-
-
-//SEED COMMENTS
-
-//CATCH
+    .then(commentDocs => commentDocs)
+    .catch( err => console.log(err))
 }
 
 module.exports = seedDB
