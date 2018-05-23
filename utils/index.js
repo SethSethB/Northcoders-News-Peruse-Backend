@@ -9,7 +9,6 @@ exports.formatArticleData = (rawArticleData, userDocs) => {
   })
 };
 
-
 exports.formatCommentData = (commentData, articleDocs, userDocs) => {
   return commentData.map ( comment => {
     return {

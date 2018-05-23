@@ -6,12 +6,12 @@ const { DB_URL }  = require('../config');
 
 mongoose.connect(DB_URL)
   .then(() => seedDB())
-  .then((someData) => {
-    console.log(`Database sucessfully seeded with ${someData.length} docs`)
+  .then((commentDocs) => {
+    console.log(`Database sucessfully seeded with ${commentDocs.length} comment docs`)
     return mongoose.disconnect();
   })
   .then(() => {
-    console.log('Sucessfully disconnected from DB')
+    console.log('Sucessfully disconnected from dev DB')
   })
   .catch((err) => {
     console.log(err);
