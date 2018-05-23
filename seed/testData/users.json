@@ -10,5 +10,11 @@
     "name": "mitch",
     "avatar_url":
       "https://carboncostume.com/wordpress/wp-content/uploads/2017/10/dale-chipanddalerescuerangers.jpg"
+  },
+  {
+    "username": "guest",
+    "name": "Guest User",
+    "avatar_url":
+      "https://none.jpg"
   }
 ]

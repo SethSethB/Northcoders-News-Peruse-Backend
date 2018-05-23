@@ -18,3 +18,4 @@ exports.formatCommentData = (commentData, articleDocs, userDocs) => {
     }
   })
 }
+
