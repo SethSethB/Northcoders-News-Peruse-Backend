@@ -103,7 +103,7 @@ describe('/api', () => {
       })
     });
 
-    it('GET /:article_id should return an object with matching id number', () => {
+    it('GET "/:article_id" should return an object with matching id number and comment count', () => {
       const {_id, title, belongs_to} = articles[0];
 
       return request
@@ -117,7 +117,7 @@ describe('/api', () => {
         })
     });
 
-    it('GET /:article_id returns a 404 with message if passed an id which does not exist', () => {
+    it('GET "/:article_id" returns a 404 with message if passed an id which does not exist', () => {
       return request
         .get('/api/articles/notvalidIDnum')
         .expect(404)
@@ -126,6 +126,69 @@ describe('/api', () => {
         })
     });
 
+    it('GET "/:article_id/comments" returns all the comments for an article', () => {
+      const {_id} = articles[0];
+      return request
+        .get(`/api/articles/${_id}/comments`)
+        .expect(200)
+        .then (res => {
+          expect(res.body.comments.length).to.equal(2)
+          expect(res.body.comments[0].body).to.equal('Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.')
+          expect(res.body.comments[0].votes).to.equal(7)
+        })
+    });
+
+    it('GET "/:article_id/comments" returns a 404 with message if passed an id which does not exist', () => {
+      return request
+        .get('/api/articles/00000000000000000000000/comments')
+        .expect(404)
+        .then(res => {
+          expect(res.body.message).to.equal('404 - Page Not Found')
+        })
+    });
+
+    it('POST "/:article_id/comments" should add an comment doc to the relevant article and return a 201 + the new article for correct input', () => {
+      const {_id} = articles[0]
+      return request
+      .post(`/api/articles/${_id}/comments`)
+      .send({"comment": "This block review is very long"})
+      .expect(201)
+      .then (res => {
+        expect(res.body.body).to.equal('This block review is very long');
+        expect(res.body.votes).to.equal(0)
+        expect(res.body.belongs_to).to.equal(`${_id}`)
+        return request.get(`/api/articles/${_id}/comments`).expect(200)
+      })
+      .then( res => {
+        expect(res.body.comments.length).to.equal(3)
+      })
+    });
+
+    it('POST "/:article_id/comments" should return 400 with message if incorrect input and not add article', () => {
+      const {_id} = articles[0]
+      return request
+      .post(`/api/articles/${_id}/comments`)
+      .send({})
+      .expect(400)
+      .then (res => {
+        expect(res.body.message).to.equal('Bad Request');
+        return request.get(`/api/articles/${_id}/comments`).expect(200)
+      })
+      .then( res => {
+        expect(res.body.comments.length).to.equal(2)
+      })
+    });
+
+    it('PUT /api/articles/:article_id', () => {
+      const {_id, votes} = articles[0]
+      return request
+      .put(`/api/articles/${_id}?vote=up`)
+      .expect(201)
+      .then( res => {
+        // expect(res.body.comments.length).to.equal(3)
+      })
+    });
+    
   });
 
 });

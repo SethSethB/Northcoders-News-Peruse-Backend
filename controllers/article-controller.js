@@ -26,7 +26,6 @@ exports.getArticleById = (req, res, next) => {
     res.send({ ...article })
   })
   .catch(err => {
-    console.log(err)
     if (err.name === "TypeError" || err.name === 'CastError') next({status: 404})
     else next({status: 500})
   })
@@ -34,11 +33,15 @@ exports.getArticleById = (req, res, next) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
-  return ArticleComment.find({belongs_to: {$eq: article_id}})
+  return ArticleComment.find({belongs_to: {$eq: article_id}}).lean()
   .populate('created_by', 'username')
   .then (comments => {
     if(!comments) return next({status:404})
     res.send({comments})
+  })
+  .catch(err => {
+    if (err.name === "TypeError" || err.name === 'CastError') next({status: 404})
+    else next({status: 500})
   })
 }
 
