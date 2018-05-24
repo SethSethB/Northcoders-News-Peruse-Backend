@@ -21,15 +21,15 @@ exports.updateArticleVotes = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
   
-  // const {comment_id} = req.params;
-  // findByIdAndRemove(comment_id)
-  // .then( removedComment => {
-  //   if(!removedComment) return next({status:404})
-  //   return res.send(removedComment)
-  // })
-  // .catch(err => {
-  //   console.log(err)
-  //   if(err.name === 'CastError') next({status: 400})
-  //   else next({status: 500})
-  // })
+  const {comment_id} = req.params;
+  ArticleComment.findByIdAndRemove(comment_id)
+  .then( removedComment => {
+    if(!removedComment) return next({status:404})
+    return res.send({msg: "done"})
+  })
+  .catch(err => {
+    console.log(err)
+    if(err.name === 'CastError') next({status: 400})
+    else next({status: 500})
+  })
 }

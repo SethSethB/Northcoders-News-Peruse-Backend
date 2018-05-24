@@ -6,19 +6,13 @@ const mongoose = require('mongoose');
 
 describe('/api', () => {
 
-  let topics;
-  let comments;
-  let articles;
-  let users;
+  let topics, comments, articles, users;
 
   beforeEach(() => {
     return seedDB()
-    .then(([topicDocs, commentDocs, articleDocs, userDocs]) => {
-      console.log(`Database sucessfully seeded with ${commentDocs.length} comment docs`)
-      topics = topicDocs
-      comments = commentDocs
-      articles = articleDocs
-      users = userDocs
+    .then((docs) => {
+      //console.log(`Database sucessfully seeded with ${commentDocs.length} comment docs`)
+      [topics, comments, articles, users] = docs
     })
   });
 
