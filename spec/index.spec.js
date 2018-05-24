@@ -104,7 +104,7 @@ describe('/api', () => {
     });
 
     it('GET /:article_id should return an object with matching id number', () => {
-      const {_id, title} = articles[0];
+      const {_id, title, belongs_to} = articles[0];
 
       return request
         .get(`/api/articles/${_id}`)
@@ -112,12 +112,18 @@ describe('/api', () => {
         .then(res => {
           expect(res.body).to.be.an('Object')
           expect(res.body.title).to.equal(title)
-          // expect(res.body.comments).to.equal(10)
+          expect(res.body.belongs_to).to.equal(belongs_to)
+          expect(res.body.comments).to.equal(2)
         })
     });
 
-    it('GET /api/articles/:article_id/comments', () => {
-      
+    it('GET /:article_id returns a 404 with message if passed an id which does not exist', () => {
+      return request
+        .get('/api/articles/notvalidIDnum')
+        .expect(404)
+        .then(res => {
+          expect(res.body.message).to.equal('404 - Page Not Found')
+        })
     });
 
   });

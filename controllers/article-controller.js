@@ -16,14 +16,19 @@ exports.getArticles = (req, res, next) => {
 
 exports.getArticleById = (req, res, next) => {
   const {article_id} = req.params;
-  return Article.findById(article_id)
+  return Article.findById(article_id).lean()
   .populate('created_by', 'username')
   .then( article => {
-    if(!article) return next({status:404})
-    res.send(article)
+    return(findCommentCounts([article]))
+  })
+  .then(formatArticlesWithCommentCount)
+  .then( ([article]) => { 
+    res.send({ ...article })
   })
   .catch(err => {
-    next({status: 500})
+    console.log(err)
+    if (err.name === "TypeError" || err.name === 'CastError') next({status: 404})
+    else next({status: 500})
   })
 }
 

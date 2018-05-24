@@ -26,7 +26,9 @@ exports.findCommentCounts = (articles) => {
 }
 
 exports.formatArticlesWithCommentCount = ([articles, ...articlesCommentCounts]) => {
+
   return articlesWithCommentCount = articles.map( (article, index) => {
+    // console.log(article)
     return {
       ...article,
       created_by: article.created_by.username,

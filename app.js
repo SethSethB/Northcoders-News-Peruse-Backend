@@ -23,7 +23,6 @@ app.use((err, req, res, next) => {
     res.status(400).send({ message: "Bad Request" });
   }
   else{
-    console.log(err)
     res.status(500).send({message: "Server problem"})
   }
 });
