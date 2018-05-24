@@ -8,7 +8,7 @@ const apiRouter = require("./routes/api-router");
 app.use(bodyParser.json())
 
 mongoose.connect(DB_URL)
-  .then(() => console.log(`Connected to the ${process.env.NODE_ENV} database`))
+  .then(() => console.log(`Connected to ${DB_URL}`))
   .catch(err => console.log(err))
 
 app.use("/api", apiRouter);

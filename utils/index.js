@@ -1,3 +1,4 @@
+const { Article, ArticleComment, Topic, User } = require('../models');
 
 exports.formatArticleData = (rawArticleData, userDocs) => {
   return rawArticleData.map( article => {
@@ -18,4 +19,8 @@ exports.formatCommentData = (commentData, articleDocs, userDocs) => {
     }
   })
 }
+
+exports.findCommentCount = (article, index) => {
+    return ArticleComment.count({belongs_to: {$eq: article._id}})
+  }
 

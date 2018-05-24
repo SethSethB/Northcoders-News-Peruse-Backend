@@ -16,15 +16,12 @@ function seedDB () {
         return Promise.all([Topic.insertMany(topicData), User.insertMany(userData)])
     })
     .then(([topicDocs, userDocs]) => {
-        console.log(`Database sucessfully seeded with ${topicDocs.length} topic docs`)
-        console.log(`Database sucessfully seeded with ${userDocs.length} user docs`)
-        return Promise.all([Article.insertMany(formatArticleData(articleData, userDocs)), userDocs])
+        return Promise.all([Article.insertMany(formatArticleData(articleData, userDocs)), userDocs, topicDocs])
     })
-    .then(([articleDocs, userDocs]) => {
-        console.log(`Database sucessfully seeded with ${articleDocs.length} article docs`)
-        return ArticleComment.insertMany(formatCommentData(commentData, articleDocs, userDocs))
+    .then(([articleDocs, userDocs, topicDocs]) => {
+        return Promise.all([ArticleComment.insertMany(formatCommentData(commentData, articleDocs, userDocs)), articleDocs, userDocs, topicDocs])
     })
-    .then(commentDocs => commentDocs)
+    .then(Docs => Docs)
     .catch( err => console.log(err))
 }
 

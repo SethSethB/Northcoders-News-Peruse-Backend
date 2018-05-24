@@ -10,21 +10,25 @@ describe('/api', () => {
 
   beforeEach(() => {
     return seedDB()
-    .then((docs) => {
-      //console.log(`Database sucessfully seeded with ${commentDocs.length} comment docs`)
+    .then(docs => {
+      console.log(`${process.env.NODE_ENV} DB sucessfully seeded with ${docs[0].length} comments, ${docs[1].length} articles, ${docs[2].length} users, ${docs[3].length} topics`)
       [topics, comments, articles, users] = docs
+      console.log(topics)
+      console.log(comments.length)
+      console.log(articles.length)
+      console.log(users.length)
     })
   });
 
   after(() => {
     return mongoose.disconnect()
-    .then(() => console.log('Sucessfully disconnected from test DB'))
+    .then(() => console.log(`Sucessfully disconnected from ${process.env.NODE_ENV} DB`))
   })
 
   describe('/topics', () => {
     
     it('Get /', () => {
-      
+
     });
 
   });
