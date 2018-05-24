@@ -40,6 +40,5 @@ exports.addArticle = (req, res, next) => {
   .catch(err => {
     if(err.name === 'ValidationError') next({status: 400})
     else next({status: 500})
-    console.log(err)
   })
 }

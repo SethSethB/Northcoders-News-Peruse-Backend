@@ -33,14 +33,18 @@ describe('/api', () => {
       .expect(200)
       .then(res => {
         expect(res.body.topics.length).to.equal(2)
+        expect(res.body.topics[0]).to.have.keys('title', 'slug', '_id', '__v')
       })
     });
 
-    it('GET "/:topic_id/articles" should return all topics as an object', () => {
+    it('GET "/:topic_id/articles" should return all articles docs for that topic as an object, with comment count also included ', () => {
       return request.get('/api/topics/mitch/articles')
       .expect(200)
       .then ( res => {
-        expect(res.body.articles.length).to.equal(2)
+        expect(res.body.articles.length).to.equal(2);
+        expect(res.body.articles[0]).to.have.keys('title', 'body', '__v', 'belongs_to', 'comments', 'created_by', 'votes', '_id');
+        expect(res.body.articles[0].comments).to.equal(2)
+        expect(res.body.articles[1].comments).to.equal(2)
       })
     });
 
@@ -57,14 +61,34 @@ describe('/api', () => {
         .send({'title': 'Mitch is the best', 'body': 'I hope Sam doesnt read this'})
         .expect(201)
         .then (res => {
-          expect(res.body.title).to.equal('Mitch is the best')
+          expect(res.body.title).to.equal('Mitch is the best');
           expect(res.body.body).to.equal('I hope Sam doesnt read this');
+          expect(res.body.votes).to.equal(0)
+          expect(res.body.belongs_to).to.equal('mitch')
           return request.get('/api/topics/mitch/articles').expect(200)
         })
         .then( res => {
           expect(res.body.articles.length).to.equal(3)
         })
     });
+
+    it('POST "/:topic_id/articles" should return 400 with message if incorrect input and not add article', () => {
+      return request.post('/api/topics/mitch/articles')
+      .send({'title': 'Mitch is the best'})
+      .expect(400)
+      .then (res => {
+        expect(res.body.message).to.equal('Bad Request');
+        return request.get('/api/topics/mitch/articles').expect(200)
+      })
+      .then( res => {
+        expect(res.body.articles.length).to.equal(2)
+      })
+    });
+
+
+
+
+
   });
 });
 
