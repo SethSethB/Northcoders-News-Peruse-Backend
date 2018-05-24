@@ -20,7 +20,18 @@ exports.formatCommentData = (commentData, articleDocs, userDocs) => {
   })
 }
 
-exports.findCommentCount = (article, index) => {
-    return ArticleComment.count({belongs_to: {$eq: article._id}})
-  }
+exports.findCommentCounts = (articles) => {
+  const commentCounts = articles.map(article => ArticleComment.count({belongs_to: {$eq: article._id}}))
+  return Promise.all([articles, ...commentCounts])
+}
+
+exports.formatArticlesWithCommentCount = ([articles, ...articlesCommentCounts]) => {
+  return articlesWithCommentCount = articles.map( (article, index) => {
+    return {
+      ...article,
+      created_by: article.created_by.username,
+      comments: articlesCommentCounts[index]
+    }
+  })
+}
 

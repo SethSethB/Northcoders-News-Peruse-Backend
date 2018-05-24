@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { Article, ArticleComment, Topic, User } = require('../models');
 
-const { formatArticleTopics, findCommentCount } = require('../utils')
+const { formatArticleTopics, findCommentCounts, formatArticlesWithCommentCount } = require('../utils')
 
 exports.getTopics = (req, res, next) => {
   Topic.find()
@@ -15,19 +15,10 @@ exports.getArticlesByTopic = (req, res, next) => {
   const {topic} = req.params;
   return Article.find({belongs_to: {$eq: topic}}).lean()
   .populate('created_by', 'username')
-  .then( articles => {
-    const commentCounts = articles.map(findCommentCount)
-    return Promise.all([articles, ...commentCounts])
-  })  
-  .then(([articles, ...articlesCommentCounts]) => {
-    const articlesWithCommentCount = articles.map( (article, index) => {
-      console.log(article)
-      return {
-        ...article,
-        comments: articlesCommentCounts[index]
-      }
-    })
-    res.send({articlesWithCommentCount})
+  .then(findCommentCounts)
+  .then(formatArticlesWithCommentCount)
+  .then(articles => {
+    res.send({articles})
   })
   .catch(next)
 }

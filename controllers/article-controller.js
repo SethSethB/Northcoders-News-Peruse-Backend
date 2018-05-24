@@ -1,9 +1,13 @@
 const mongoose = require('mongoose')
 const { Article, ArticleComment, Topic, User } = require('../models');
+const { findCommentCounts, formatArticlesWithCommentCount } = require('../utils')
+
 
 exports.getArticles = (req, res, next) => {
-  Article.find()
+  Article.find().lean()
   .populate('created_by', 'username')
+  .then(findCommentCounts)
+  .then(formatArticlesWithCommentCount)
   .then( articles => {
     res.send({articles})
   })
