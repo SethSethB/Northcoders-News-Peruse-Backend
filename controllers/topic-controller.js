@@ -18,6 +18,7 @@ exports.getArticlesByTopic = (req, res, next) => {
   .then(findCommentCounts)
   .then(formatArticlesWithCommentCount)
   .then(articles => {
+    if(articles.length === 0) return next({status: 404})
     res.send({articles})
   })
   .catch(next)

@@ -18,7 +18,7 @@ app.get("/*", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err.status === 404) res.status(404).send({msg: "404"});
+  if (err.status === 404) res.status(404).send({message: "404 - Page Not Found"});
   else if (err.status === 400) {
     res.status(400).send({ message: "Bad Request" });
   }
