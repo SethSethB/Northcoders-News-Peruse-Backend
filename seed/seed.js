@@ -21,7 +21,7 @@ function seedDB () {
     .then(([articleDocs, userDocs, topicDocs]) => {
         return Promise.all([ArticleComment.insertMany(formatCommentData(commentData, articleDocs, userDocs)), articleDocs, userDocs, topicDocs])
     })
-    .then(Docs => Docs)
+    .then(docs => docs)
     .catch( err => console.log(err))
 }
 

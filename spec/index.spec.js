@@ -6,24 +6,19 @@ const mongoose = require('mongoose');
 
 describe('/api', () => {
 
-  let topics, comments, articles, users;
+  let topics;
+  let comments; 
+  let articles;
+  let users;
 
   beforeEach(() => {
     return seedDB()
     .then(docs => {
-      console.log(`${process.env.NODE_ENV} DB sucessfully seeded with ${docs[0].length} comments, ${docs[1].length} articles, ${docs[2].length} users, ${docs[3].length} topics`)
-      [topics, comments, articles, users] = docs
-      console.log(topics)
-      console.log(comments.length)
-      console.log(articles.length)
-      console.log(users.length)
+      console.log(`${process.env.NODE_ENV} DB sucessfully seeded with ${docs[0].length} comments, ${docs[1].length} articles, ${docs[2].length} users, ${docs[3].length} topics`);
+
+      [comments, articles, users, topics] = docs
     })
   });
-
-  after(() => {
-    return mongoose.disconnect()
-    .then(() => console.log(`Sucessfully disconnected from ${process.env.NODE_ENV} DB`))
-  })
 
   describe('/topics', () => {
     
@@ -32,6 +27,12 @@ describe('/api', () => {
     });
 
   });
+
+
+  after(() => {
+    return mongoose.disconnect()
+    .then(() => console.log(`Sucessfully disconnected from ${process.env.NODE_ENV} DB`))
+  })
 
 });
 
