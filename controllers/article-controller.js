@@ -23,8 +23,7 @@ exports.getArticleById = (req, res, next) => {
     res.send(article)
   })
   .catch(err => {
-    if(err.name === 'CastError') next({status: 400})
-    else next({status: 500})
+    next({status: 500})
   })
 }
 
