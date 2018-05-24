@@ -16,7 +16,19 @@ exports.getArticlesByTopic = (req, res, next) => {
   return Article.find({belongs_to: {$eq: topic}})
   .populate('created_by', 'username')
   .then( articles => {
-    res.send(articles)
+    articles.map(article => {
+      return ArticleComment.count({belongs_to: {$eq: article._id}})
+      .then(comments => {
+        return {
+          ...article,
+          comments
+        }
+      })
+      .then(articlesWithComments =>{
+        console.log(articlesWithComments.length)
+        return res.send({articles: articlesWithComments})
+      })
+   })
   })
   .catch(next)
 }
