@@ -10,8 +10,7 @@ exports.updateCommentVotes = (req, res, next) => {
 
   return ArticleComment.findByIdAndUpdate(comment_id, {$inc: {votes: voteChange}}, {new: true})
   .then(comment => {
-    if(vote !== 'up' && vote !== 'down') return next({status: 400})
-    res.status(200).send(comment)
+    res.status(201).send(comment)
   })
   .catch(err => {
     if(err.name === 'CastError') next({status: 404})

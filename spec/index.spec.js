@@ -207,13 +207,14 @@ describe('/api', () => {
       })
     });
 
-    it('PUT "/:article_id?vote=somethingelse" (ie any vote query which is not up or down) will return 400 and bad request message', () => {
+    it('PUT "/:article_id?vote=somethingelse" (ie any vote query which is not up or down) will return 200 and the article unchanged', () => {
       const {_id, votes, title} = articles[0]
       return request
       .put(`/api/articles/${_id}?vote=somethingelse`)
-      .expect(400)
+      .expect(201)
       .then( res => {
-        expect(res.body.message).to.equal('Bad Request')
+        expect(res.body.votes).to.equal(votes)
+        expect(res.body.title).to.equal(title)
       })
     });
 
@@ -233,7 +234,7 @@ describe('/api', () => {
       const {_id, votes, body} = comments[0]
       return request
       .put(`/api/comments/${_id}?vote=up`)
-      .expect(200)
+      .expect(201)
       .then( res => {
         expect(res.body.body).to.equal(body)
         expect(res.body.votes).to.equal(votes + 1)
@@ -244,20 +245,21 @@ describe('/api', () => {
       const {_id, votes, body} = comments[0]
       return request
       .put(`/api/comments/${_id}?vote=down`)
-      .expect(200)
+      .expect(201)
       .then( res => {
         expect(res.body.body).to.equal(body)
         expect(res.body.votes).to.equal(votes -1)
       });
     });
 
-    it('PUT "/:comment_id?vote=somethingelse" (ie any vote query which is not up or down) will return 400 and bad request message', () => {
-      const { _id } = comments[0]
+    it('PUT "/:comment_id?vote=somethingelse" (ie any vote query which is not up or down) will return 201 and the comment unchanged', () => {
+      const { _id, votes, body } = comments[0]
       return request
       .put(`/api/comments/${_id}?vote=somethingelse`)
-      .expect(400)
+      .expect(201)
       .then( res => {
-        expect(res.body.message).to.equal('Bad Request')
+        expect(res.body.body).to.equal(body)
+        expect(res.body.votes).to.equal(votes)
       })
     });
 
