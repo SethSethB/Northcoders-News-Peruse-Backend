@@ -14,7 +14,7 @@ describe('/api', () => {
   beforeEach(() => {
     return seedDB()
     .then(docs => {
-      console.log(`${process.env.NODE_ENV} DB sucessfully seeded with ${docs[0].length} comments, ${docs[1].length} articles, ${docs[2].length} users, ${docs[3].length} topics`);
+      // console.log(`${process.env.NODE_ENV} DB sucessfully seeded with ${docs[0].length} comments, ${docs[1].length} articles, ${docs[2].length} users, ${docs[3].length} topics`);
 
       [comments, articles, users, topics] = docs
     })
@@ -37,7 +37,7 @@ describe('/api', () => {
       })
     });
 
-    it('GET "/:topic_id/articles" should return all articles docs for that topic as an object, with comment count also included ', () => {
+    it('GET "/:topic_id/articles" should return all articles docs for that topic as an object, with comment count included and belongs_to & created_by fields populated', () => {
       return request
       .get('/api/topics/mitch/articles')
       .expect(200)
@@ -46,6 +46,8 @@ describe('/api', () => {
         expect(res.body.articles[0]).to.have.keys('title', 'body', '__v', 'belongs_to', 'comments', 'created_by', 'votes', '_id');
         expect(res.body.articles[0].comments).to.equal(2)
         expect(res.body.articles[1].comments).to.equal(2)
+        expect(res.body.articles[0].belongs_to).to.equal('mitch')
+        expect(res.body.articles[0].created_by).to.equal('butter_bridge')
       })
     });
 
@@ -58,7 +60,7 @@ describe('/api', () => {
       })
     });
 
-    it('POST "/:topic_id/articles" should add an article doc and return a 201 and the new article for correct input', () => {
+    it('POST "/:topic_id/articles" should add an article doc and return a 201 and the new article for correct input, with created_by defaulting to guest id', () => {
       return request
         .post('/api/topics/mitch/articles')
         .send({'title': 'Mitch is the best', 'body': 'I hope Sam doesnt read this'})
@@ -68,6 +70,8 @@ describe('/api', () => {
           expect(res.body.body).to.equal('I hope Sam doesnt read this');
           expect(res.body.votes).to.equal(0)
           expect(res.body.belongs_to).to.equal('mitch')
+          const guestUserId = `${users[2]._id}`
+          expect(res.body.created_by).to.equal(guestUserId)
           return request.get('/api/topics/mitch/articles').expect(200)
         })
         .then( res => {
@@ -147,16 +151,18 @@ describe('/api', () => {
         })
     });
 
-    it('POST "/:article_id/comments" should add an comment doc to the relevant article and return a 201 + the new article for correct input', () => {
+    it('POST "/:article_id/comments" should add an comment doc to the relevant article and return a 201 + the new article for correct input defaulting to guest user for created_by', () => {
       const {_id} = articles[0]
       return request
       .post(`/api/articles/${_id}/comments`)
-      .send({"comment": "This block review is very long"})
+      .send({"comment": "Backend is great!"})
       .expect(201)
       .then (res => {
-        expect(res.body.body).to.equal('This block review is very long');
+        expect(res.body.body).to.equal('Backend is great!');
         expect(res.body.votes).to.equal(0)
         expect(res.body.belongs_to).to.equal(`${_id}`)
+        const guestUserId = `${users[2]._id}`
+        expect(res.body.created_by).to.equal(guestUserId)
         return request.get(`/api/articles/${_id}/comments`).expect(200)
       })
       .then( res => {
@@ -179,13 +185,45 @@ describe('/api', () => {
       })
     });
 
-    it('PUT /api/articles/:article_id', () => {
-      const {_id, votes} = articles[0]
+    it('PUT /:article_id?vote=up will increase the votecount of an article by one and return updated object', () => {
+      const {_id, votes, title} = articles[0]
       return request
       .put(`/api/articles/${_id}?vote=up`)
       .expect(201)
       .then( res => {
-        // expect(res.body.comments.length).to.equal(3)
+        expect(res.body.title).to.equal(title)
+        expect(res.body.votes).to.equal(votes + 1)
+      })
+    });
+
+    it('PUT /:article_id?vote=down will decrease the votecount of an article by one and return updated object', () => {
+      const {_id, votes, title} = articles[0]
+      return request
+      .put(`/api/articles/${_id}?vote=down`)
+      .expect(201)
+      .then( res => {
+        expect(res.body.title).to.equal(title)
+        expect(res.body.votes).to.equal(votes - 1)
+      })
+    });
+
+    it('PUT /:article_id?vote=somethingelse (ie any vote query which is not up or down) will return the updated object with votes unchanged', () => {
+      const {_id, votes, title} = articles[0]
+      return request
+      .put(`/api/articles/${_id}?vote=somethingelse`)
+      .expect(201)
+      .then( res => {
+        expect(res.body.title).to.equal(title)
+        expect(res.body.votes).to.equal(votes)
+      })
+    });
+
+    it('PUT /:article_id?vote=up will return a 404 for an invalid id', () => {
+      return request
+      .put(`/api/articles/notAnArticleId?vote=up`)
+      .expect(404)
+      .then( res => {
+        expect(res.body.message).to.equal('404 - Page Not Found')
       })
     });
     

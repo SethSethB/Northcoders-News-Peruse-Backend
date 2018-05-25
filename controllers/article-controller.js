@@ -56,7 +56,7 @@ exports.addCommentToArticle = (req, res, next) => {
     return ArticleComment.create(newComment)
   })
   .then( commentDoc => {
-    return res.status(201).send(commentDoc)
+    res.status(201).send(commentDoc)
   })
   .catch(err => {
     if(err.name === 'CastError' || err.name === 'ValidationError') next({status: 400})
@@ -74,10 +74,10 @@ exports.updateArticleVotes = (req, res, next) => {
   return Article.findByIdAndUpdate(article_id, {$inc: {votes: voteChange}}, {new: true})
   .then( article => {
     if(!article) return next({status:404})
-    return res.status(201).send(article)
+    res.status(201).send(article)
   })
   .catch(err => {
-    if(err.name === 'CastError') next({status: 400})
+    if(err.name === 'CastError') next({status: 404})
     else next({status: 500})
   })
 }
