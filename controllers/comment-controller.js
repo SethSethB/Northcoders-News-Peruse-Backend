@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { Article, ArticleComment, Topic, User } = require('../models');
 
-exports.updateArticleVotes = (req, res, next) => {
+exports.updateCommentVotes = (req, res, next) => {
   const {comment_id} = req.params;
   const {vote} = req.query
   let voteChange = 0;
@@ -10,11 +10,11 @@ exports.updateArticleVotes = (req, res, next) => {
 
   return ArticleComment.findByIdAndUpdate(comment_id, {$inc: {votes: voteChange}}, {new: true})
   .then(comment => {
-    if(!comment) return next({status:404})
-    return res.status(201).send(comment)
+    if(vote !== 'up' && vote !== 'down') return next({status: 400})
+    res.status(200).send(comment)
   })
   .catch(err => {
-    if(err.name === 'CastError') next({status: 400})
+    if(err.name === 'CastError') next({status: 404})
     else next({status: 500})
   })
 }
@@ -25,11 +25,11 @@ exports.deleteComment = (req, res, next) => {
   ArticleComment.findByIdAndRemove(comment_id)
   .then( removedComment => {
     if(!removedComment) return next({status:404})
-    return res.send({msg: "done"})
+    res.status(204).send({})
   })
   .catch(err => {
     console.log(err)
-    if(err.name === 'CastError') next({status: 400})
+    if(err.name === 'CastError') next({status: 404})
     else next({status: 500})
   })
 }

@@ -73,6 +73,7 @@ exports.updateArticleVotes = (req, res, next) => {
 
   return Article.findByIdAndUpdate(article_id, {$inc: {votes: voteChange}}, {new: true})
   .then( article => {
+    if(vote !== 'up' && vote !== 'down') return next({status: 400})
     if(!article) return next({status:404})
     res.status(201).send(article)
   })

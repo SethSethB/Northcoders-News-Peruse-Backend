@@ -185,7 +185,7 @@ describe('/api', () => {
       })
     });
 
-    it('PUT /:article_id?vote=up will increase the votecount of an article by one and return updated object', () => {
+    it('PUT "/:article_id?vote=up" will increase the votecount of an article by one and return updated object', () => {
       const {_id, votes, title} = articles[0]
       return request
       .put(`/api/articles/${_id}?vote=up`)
@@ -196,7 +196,7 @@ describe('/api', () => {
       })
     });
 
-    it('PUT /:article_id?vote=down will decrease the votecount of an article by one and return updated object', () => {
+    it('PUT "/:article_id?vote=down" will decrease the votecount of an article by one and return updated object', () => {
       const {_id, votes, title} = articles[0]
       return request
       .put(`/api/articles/${_id}?vote=down`)
@@ -207,18 +207,17 @@ describe('/api', () => {
       })
     });
 
-    it('PUT /:article_id?vote=somethingelse (ie any vote query which is not up or down) will return the updated object with votes unchanged', () => {
+    it('PUT "/:article_id?vote=somethingelse" (ie any vote query which is not up or down) will return 400 and bad request message', () => {
       const {_id, votes, title} = articles[0]
       return request
       .put(`/api/articles/${_id}?vote=somethingelse`)
-      .expect(201)
+      .expect(400)
       .then( res => {
-        expect(res.body.title).to.equal(title)
-        expect(res.body.votes).to.equal(votes)
+        expect(res.body.message).to.equal('Bad Request')
       })
     });
 
-    it('PUT /:article_id?vote=up will return a 404 for an invalid id', () => {
+    it('PUT "/:article_id?vote=up" will return a 404 for an invalid id', () => {
       return request
       .put(`/api/articles/notAnArticleId?vote=up`)
       .expect(404)
@@ -226,8 +225,73 @@ describe('/api', () => {
         expect(res.body.message).to.equal('404 - Page Not Found')
       })
     });
-    
   });
 
-});
+  describe('/comments', () => {
 
+    it('PUT "/coments:comment_id?vote=up" will increase the votecount of an comment by one and return updated comment', () => {
+      const {_id, votes, body} = comments[0]
+      return request
+      .put(`/api/comments/${_id}?vote=up`)
+      .expect(200)
+      .then( res => {
+        expect(res.body.body).to.equal(body)
+        expect(res.body.votes).to.equal(votes + 1)
+      });
+    });
+
+    it('PUT "/coments:comment_id?vote=down" will decrease the votecount of an comment by one and return updated comment', () => {
+      const {_id, votes, body} = comments[0]
+      return request
+      .put(`/api/comments/${_id}?vote=down`)
+      .expect(200)
+      .then( res => {
+        expect(res.body.body).to.equal(body)
+        expect(res.body.votes).to.equal(votes -1)
+      });
+    });
+
+    it('PUT "/:comment_id?vote=somethingelse" (ie any vote query which is not up or down) will return 400 and bad request message', () => {
+      const { _id } = comments[0]
+      return request
+      .put(`/api/comments/${_id}?vote=somethingelse`)
+      .expect(400)
+      .then( res => {
+        expect(res.body.message).to.equal('Bad Request')
+      })
+    });
+
+    it('PUT "/:comment_id?vote=up" will return a 404 for an invalid id', () => {
+      return request
+      .put(`/api/comments/notACommentId?vote=up`)
+      .expect(404)
+      .then( res => {
+        expect(res.body.message).to.equal('404 - Page Not Found')
+      })
+    });
+
+    it('DELETE "/:comment_id" will delete comment from the db and return 204 & an empty object', () => {
+      const { _id, belongs_to } = comments[0]
+      return request
+      .delete(`/api/comments/${_id}`)
+      .expect(204)
+      .then( res => {
+        expect(res.body).to.eql({})
+        return request.get(`/api/articles/${belongs_to}/comments`).expect(200)
+      })
+      .then( res => {
+        expect(res.body.comments.length).to.equal(1)
+      })
+      });
+
+    it('DELETE "/:comment_id" will return a 404 if invalid id', () => {
+      return request
+      .delete('/api/comments/notRealIDNum')
+      .expect(404)
+      .then( res => {
+        expect(res.body.message).to.equal('404 - Page Not Found')
+      })
+    });
+
+  });
+});
