@@ -23,7 +23,7 @@ app.use((err, req, res, next) => {
     res.status(400).send({ message: "Bad Request" });
   }
   else{
-    res.status(500).send({message: "Server problem"})
+    res.status(500).send({message: "Internal Server Error"})
   }
 });
 
