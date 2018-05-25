@@ -20,7 +20,6 @@ exports.updateCommentVotes = (req, res, next) => {
 }
 
 exports.deleteComment = (req, res, next) => {
-  
   const {comment_id} = req.params;
   ArticleComment.findByIdAndRemove(comment_id)
   .then( removedComment => {
@@ -28,8 +27,10 @@ exports.deleteComment = (req, res, next) => {
     res.status(204).send({})
   })
   .catch(err => {
-    console.log(err)
     if(err.name === 'CastError') next({status: 404})
     else next({status: 500})
   })
 }
+
+
+

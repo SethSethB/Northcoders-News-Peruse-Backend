@@ -47,7 +47,7 @@ describe('/api', () => {
         expect(res.body.articles[0].comments).to.equal(2)
         expect(res.body.articles[1].comments).to.equal(2)
         expect(res.body.articles[0].belongs_to).to.equal('mitch')
-        expect(res.body.articles[0].created_by).to.equal('butter_bridge')
+        expect(res.body.articles[0].created_by.username).to.equal('butter_bridge')
       })
     });
 
@@ -292,6 +292,59 @@ describe('/api', () => {
         expect(res.body.message).to.equal('404 - Page Not Found')
       })
     });
+  });
+
+  describe('/users', () => {
+
+    it('GET "/" should return all users as an object', () => {
+      return request
+      .get('/api/users')
+      .expect(200)
+      .then(res => {
+        expect(res.body.users.length).to.equal(3)
+        expect(res.body.users[0]).to.have.keys('username', 'name', 'avatar_url','_id', '__v')
+      })
+    });
+    
+    it('GET "/:username" returns an object with the profile data for the specified user.', () => {
+      return request
+      .get('/api/users/butter_bridge')
+      .expect(200)
+      .then (res => {
+        expect(res.body.username).to.equal('butter_bridge')
+        expect(res.body.name).to.equal('jonny')
+        expect(res.body.avatar_url).to.equal('https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg')
+      })
+    });
+
+    it('GET "/:username" returns a 404 with message if passed an id which does not exist', () => {
+      return request
+        .get('/api/users/notARealUsername')
+        .expect(404)
+        .then(res => {
+          expect(res.body.message).to.equal('404 - Page Not Found')
+        })
+    });
+
+    it('GET "/:username/articles" returns all articles belonging to that user with comment count', () => {
+      return request
+      .get(`/api/users/butter_bridge/articles`)
+      .expect(200)
+      .then( res => {
+        expect(res.body.articles.length).to.equal(2)
+        expect(res.body.articles[0].comments).to.equal(2)
+      })
+    });
+
+    it('GET "/:username/articles" returns a 404 with message if passed an username which does not exist', () => {
+      return request
+        .get('/api/users/notARealUsername/articles')
+        .expect(404)
+        .then(res => {
+          expect(res.body.message).to.equal('404 - Page Not Found')
+        })
+    });
 
   });
+
 });

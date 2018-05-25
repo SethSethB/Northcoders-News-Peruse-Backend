@@ -8,7 +8,7 @@ router.route('/:article_id')
   .get(getArticleById)
   .put(updateArticleVotes)
 
-router.route('/:article_id/comments')
+router.route('/:belongs_to/comments')
   .get(getArticleComments)
   .post(addCommentToArticle)
 

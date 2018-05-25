@@ -6,7 +6,7 @@ const { formatArticleTopics, findCommentCounts, formatArticlesWithCommentCount }
 exports.getTopics = (req, res, next) => {
   Topic.find()
     .then( topics => {
-      res.send({topics: topics})
+      res.send({topics})
     })
     .catch(next)
 }

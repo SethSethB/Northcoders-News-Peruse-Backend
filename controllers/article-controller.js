@@ -32,8 +32,7 @@ exports.getArticleById = (req, res, next) => {
 }
 
 exports.getArticleComments = (req, res, next) => {
-  const { article_id } = req.params;
-  return ArticleComment.find({belongs_to: {$eq: article_id}}).lean()
+  return ArticleComment.find(req.params).lean()
   .populate('created_by', 'username')
   .then (comments => {
     if(!comments) return next({status:404})
@@ -46,12 +45,12 @@ exports.getArticleComments = (req, res, next) => {
 }
 
 exports.addCommentToArticle = (req, res, next) => {
-  return User.findOne({username: {$eq: 'guest'}})
+  return User.findOne({username: 'guest'})
   .then (guest => {
     const newComment = {
       body: req.body.comment,
       created_by: req.body.username ? req.body.username : guest._id,
-      belongs_to: req.params.article_id
+      ...req.params
     }
     return ArticleComment.create(newComment)
   })
