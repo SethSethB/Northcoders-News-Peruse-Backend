@@ -3,6 +3,7 @@ const { expect } = require('chai');
 const request = require('supertest')(app);
 const seedDB = require('../seed/seed');
 const mongoose = require('mongoose');
+const apiRoutesRef = require('../api_homepage')
 
 describe('/api', () => {
 
@@ -25,6 +26,19 @@ describe('/api', () => {
     .then(() => console.log(`Sucessfully disconnected from ${process.env.NODE_ENV} DB`))
   })
 
+  describe('/', () => {
+    
+    it('GET "/" returns a json object with api routes and descriptions as key-value pairs', () => {
+      return request
+        .get('/api')
+        .expect(200)
+        .then( res => {
+          expect(res.body).to.eql(apiRoutesRef)
+        })
+    });
+
+  });
+
   describe('/topics', () => {
     
     it('GET "/" should return all topics as an object', () => {
@@ -37,7 +51,7 @@ describe('/api', () => {
       })
     });
 
-    it('GET "/:topic_id/articles" should return all articles docs for that topic as an object, with comment count included and belongs_to & created_by fields populated', () => {
+    it('GET "/:topic/articles" should return all articles docs for that topic slug as an object, with comment count included and belongs_to & created_by fields populated', () => {
       return request
       .get('/api/topics/mitch/articles')
       .expect(200)
@@ -51,7 +65,7 @@ describe('/api', () => {
       })
     });
 
-    it('GET "/:topic_id/articles" should return a 404 with message if no articles for a topic found', () => {
+    it('GET "/:topic/articles" should return a 404 with message if no articles for a topic found', () => {
       return request
       .get('/api/topics/sam/articles')
       .expect(404)
@@ -60,7 +74,7 @@ describe('/api', () => {
       })
     });
 
-    it('POST "/:topic_id/articles" should add an article doc and return a 201 and the new article for correct input, with created_by defaulting to guest id', () => {
+    it('POST "/:topic/articles" should add an article doc and return a 201 and the new article for correct input, with created_by defaulting to guest id', () => {
       return request
         .post('/api/topics/mitch/articles')
         .send({'title': 'Mitch is the best', 'body': 'I hope Sam doesnt read this'})

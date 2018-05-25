@@ -3,10 +3,11 @@ const articleRouter = require("./article-router");
 const commentRouter = require("./comment-router");
 const topicRouter = require("./topic-router");
 const userRouter = require("./user-router");
+const apiRoutesRef = require('../api_homepage')
 
 
 router.get("/", (req, res, next) => {
-  res.send('WEBPAGE WITH ALL THE ROUTES ON')
+  res.send(apiRoutesRef)
 });
 
 router.use("/topics", topicRouter);
