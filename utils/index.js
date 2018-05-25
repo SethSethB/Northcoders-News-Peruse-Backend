@@ -35,3 +35,10 @@ exports.formatArticlesWithCommentCount = ([articles, ...articlesCommentCounts]) 
   })
 }
 
+exports.insertTopic = title => {
+  const newTopic = {
+    title,
+    slug: title ? title.toLowerCase() : null
+  }
+  return Topic.create(newTopic)
+}

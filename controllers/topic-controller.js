@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { Article, ArticleComment, Topic, User } = require('../models');
 
-const { formatArticleTopics, findCommentCounts, formatArticlesWithCommentCount } = require('../utils')
+const { formatArticleTopics, findCommentCounts, formatArticlesWithCommentCount, insertTopic } = require('../utils')
 
 exports.getTopics = (req, res, next) => {
   Topic.find()
@@ -34,11 +34,29 @@ exports.addArticle = (req, res, next) => {
     }
     return Article.create(newArticle)
   })
-  .then( articleDoc => {
+  .then(articleDoc => {
     res.status(201).send(articleDoc)
+    return articleDoc.belongs_to
+  })
+  .then(articleTopic => {
+    return Topic.findOne({slug: articleTopic})
+  })
+  .then(existingTopic => {
+    if(!existingTopic) insertTopic(req.params.topic)
   })
   .catch(err => {
     if(err.name === 'ValidationError') next({status: 400})
+    else next({status: 500})
+  })
+}
+
+exports.addTopic = (req, res, next) =>{
+  insertTopic(req.body.title)
+  .then( topic => {
+    res.status(201).send(topic)
+  })
+  .catch(err => {
+    if(err.name === 'BulkWriteError' || err.name === 'ValidationError') next({status: 400})
     else next({status: 500})
   })
 }

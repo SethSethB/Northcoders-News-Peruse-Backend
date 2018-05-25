@@ -49,6 +49,35 @@ describe('/api', () => {
       })
     });
 
+    it('POST "/" should add a topic doc and return a 201 and the new topic as an object', () => {
+      return request
+        .post('/api/topics')
+        .send({'title': 'ExcitingNewTopic'})
+        .expect(201)
+        .then (res => {
+          expect(res.body.title).to.equal('ExcitingNewTopic');
+          expect(res.body.slug).to.equal('excitingnewtopic');
+          return request.get('/api/topics').expect(200)
+        })
+        .then( res => {
+          expect(res.body.topics.length).to.equal(3)
+        })
+    });
+
+    it('POST "/" should return 400 with message if incorrect input and not add topic', () => {
+      return request
+      .post('/api/topics')
+      .send({})
+      .expect(400)
+      .then (res => {
+        expect(res.body.message).to.equal('Bad Request');
+        return request.get('/api/topics').expect(200)
+      })
+      .then( res => {
+        expect(res.body.topics.length).to.equal(2)
+      })
+    });
+
     it('GET "/:topic/articles" should return all articles docs for that topic slug as an object, with comment count included and belongs_to & created_by fields populated', () => {
       return request
       .get('/api/topics/mitch/articles')
@@ -88,6 +117,31 @@ describe('/api', () => {
         })
         .then( res => {
           expect(res.body.articles.length).to.equal(3)
+        })
+    });
+
+    it('POST "/:topic/articles" if topic does not exist, should post the article successfully and create a new topic doc in the DB', () => {
+      return request
+        .post('/api/topics/shinyNewTopic/articles')
+        .send({'title': 'Mitch is the best', 'body': 'I hope Sam doesnt read this'})
+        .expect(201)
+        .then (res => {
+          expect(res.body.title).to.equal('Mitch is the best');
+          expect(res.body.body).to.equal('I hope Sam doesnt read this');
+          expect(res.body.votes).to.equal(0)
+          expect(res.body.belongs_to).to.equal('shinyNewTopic')
+          const guestUserId = `${users[2]._id}`
+          expect(res.body.created_by).to.equal(guestUserId)
+          return request.get('/api/topics/shinyNewTopic/articles').expect(200)
+        })
+        .then( res => {
+          expect(res.body.articles.length).to.equal(1)
+          return request.get('/api/topics').expect(200)
+        })
+        .then (res => {
+          expect(res.body.topics.length).to.equal(3)
+          expect(res.body.topics[2].title).to.equal('shinyNewTopic')
+          expect(res.body.topics[2].slug).to.equal('shinynewtopic')
         })
     });
 

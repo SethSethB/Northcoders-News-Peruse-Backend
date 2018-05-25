@@ -4,9 +4,11 @@ module.exports = {
   
   'GET /api/topics': 'Returns list of all topics',
 
+  'POST /api/topics': 'Posts a new topic. Post should be a JSON object with key "title", cannot post a topic which already exists',
+
   'GET /api/topics/:topic/articles' : 'Returns all articles for a given topic slug',
 
-  'POST /api/topics/:topic/articles' : 'Posts a new article for a given topic slug. Posts should be a JSON object with keys "title" and "body", will default to posting as guest',
+  'POST /api/topics/:topic/articles' : 'Posts a new article for a given topic slug. Posts should be a JSON object with keys "title" and "body", will default to posting as guest. If topic does not already exist, will create new Topic doc',
 
   'GET /api/articles' : 'Returns all articles',
 
