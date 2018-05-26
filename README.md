@@ -9,7 +9,7 @@ Northcoders News is a news aggregation and rating site which allows you to:
 
 There is a live link for the RESTful API [here](https://seth-northcoders-news.herokuapp.com/api/) which details available routes and methods available.
 
-### Prerequisites
+## Prerequisites
 
 You will need [node](https://nodejs.org/en/) and [mongo](https://docs.mongodb.com/manual/installation/) installed, please follow the links for instructions on how to do this.
 
@@ -27,15 +27,17 @@ Now run the following command to install all dependencies:
 ```
 npm i
 ```
+## Getting Started & Installation
 
-There is some config required to setup to seed/connect to the relevant mongo databases when serving locally, you can run the following command as a shortcut to create/populate the config files:
-```
-mkdir config ; touch config/dev.config.js ; touch config/test.config.js ; touch config/index.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news';" > config/dev.config.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news_test';" > config/test.config.js ; echo "const path = process.env.NODE_ENV || 'dev';\nmodule.exports = require(\`./\${path}.config.js\`)" > config/index.js
-
-```
 In order to run the enviroment locally you will need to have mongod running, enter the following in a separate shell to run as a background process:
 ```
 mongod
+```
+
+There is some config setup required to sucessfully connect to the local dev/test mongo url, you can run the following command as a shortcut to create & populate the config files:
+```
+mkdir config ; touch config/dev.config.js ; touch config/test.config.js ; touch config/index.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news';" > config/dev.config.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news_test';" > config/test.config.js ; echo "const path = process.env.NODE_ENV || 'dev';\nmodule.exports = require(\`./\${path}.config.js\`)" > config/index.js
+
 ```
 
 You will now be able to launch the api locally with the command:
@@ -52,7 +54,7 @@ You should be able to access the local api in your browser:
 http://localhost:9090/api
 ```
 
-For example, accessing the below should return all 36 articles:
+For example, accessing the below should return all 36 dev articles:
 ```
 http://localhost:9090/api/articles
 ```
@@ -76,4 +78,4 @@ This will automatically connect to the test database, seed the raw test data bef
 
 ## Acknowledgments
 
-A big thank you to all the usual excellent support and feedback from all the Northcoders team.
+A big thank you to all the Northcoders team for all the usual excellent support and feedback.
