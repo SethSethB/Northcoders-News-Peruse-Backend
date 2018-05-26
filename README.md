@@ -19,23 +19,23 @@ Clone this repository with the following terminal command:
 ```
 git clone https://github.com/SethSethB/BE-FT-northcoders-news.git
 ```
-In the BE-FT-northcoders-news directory run the following command to install all dependencies:
+Change into the BE-FT-northcoders-news directory:
+```
+cd BE-FT-northcoders-news
+```
+Now run the following command to install all dependencies:
 ```
 npm i
+```
+
+There is some config required to setup to seed/connect to the relevant mongo databases when serving locally, you can run the following command as a shortcut to create/populate the config files:
+```
+mkdir config ; touch config/dev.config.js ; touch config/test.config.js ; touch config/index.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news';" > config/dev.config.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news_test';" > config/test.config.js ; echo "const path = process.env.NODE_ENV || 'dev';\nmodule.exports = require(\`./\${path}.config.js\`)" > config/index.js
+
 ```
 In order to run the enviroment locally you will need to have mongod running, enter the following in a separate shell to run as a background process:
 ```
 mongod
-```
-
-There is some config to setup to access the relevant mongo databases, to do this create the following directory and files:
-```
-mkdir config ; touch config/dev.config.js ; touch config/test.config.js ; touch config/index.js
-```
-Then populate the config files as follows:
-```
-echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news';" > config/dev.config.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news_test';" > config/test.config.js ; echo "const path = process.env.NODE_ENV || 'dev;'"\n"module.exports = require(`./${path}.config.js`)
-
 ```
 
 You will now be able to launch the api locally with the command:
