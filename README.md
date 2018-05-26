@@ -27,7 +27,7 @@ Now run the following command to install all dependencies:
 ```
 npm i
 ```
-## Getting Started & Installation
+## Running the local development env
 
 In order to run the enviroment locally you will need to have mongod running, enter the following in a separate shell to run as a background process:
 ```
