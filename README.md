@@ -28,6 +28,16 @@ In order to run the enviroment locally you will need to have mongod running, ent
 mongod
 ```
 
+There is some config to setup to access the relevant mongo databases, to do this create the following directory and files:
+```
+mkdir config ; touch config/dev.config.js ; touch config/test.config.js ; touch config/index.js
+```
+Then populate the config files as follows:
+```
+echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news';" > config/dev.config.js ; echo "exports.DB_URL = 'mongodb://localhost:27017/northcoders_news_test';" > config/test.config.js ; echo "const path = process.env.NODE_ENV || 'dev;'"\n"module.exports = require(`./${path}.config.js`)
+
+```
+
 You will now be able to launch the api locally with the command:
 ```
 npm run dev
