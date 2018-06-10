@@ -8,7 +8,7 @@
     "seed:dev": "node ./seed/seed.dev.js",
     "seed:prod": "NODE_ENV=production node ./seed/seed.dev.js",
     "start": "node index.js",
-    "dev": "npm run seed:dev && nodemon index.js"
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
