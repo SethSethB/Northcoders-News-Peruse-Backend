@@ -1,62 +1,68 @@
-const mongoose = require('mongoose')
-const { Article, ArticleComment, Topic, User } = require('../models');
+const mongoose = require("mongoose");
+const { Article, ArticleComment, Topic, User } = require("../models");
 
-const { formatArticleTopics, findCommentCounts, formatArticlesWithCommentCount, insertTopic } = require('../utils')
+const {
+  formatArticleTopics,
+  findCommentCounts,
+  formatArticlesWithCommentCount,
+  insertTopic
+} = require("../utils");
 
 exports.getTopics = (req, res, next) => {
   Topic.find()
-    .then( topics => {
-      res.send({topics})
+    .then(topics => {
+      res.send({ topics });
     })
-    .catch(next)
-}
+    .catch(next);
+};
 
 exports.getArticlesByTopic = (req, res, next) => {
-  const {topic} = req.params;
-  return Article.find({belongs_to: {$eq: topic}}).lean()
-  .populate('created_by', 'username')
-  .then(findCommentCounts)
-  .then(formatArticlesWithCommentCount)
-  .then(articles => {
-    if(articles.length === 0) return next({status: 404})
-    res.send({articles})
-  })
-  .catch(next)
-}
+  const { topic } = req.params;
+  return Article.find({ belongs_to: { $eq: topic } })
+    .lean()
+    .populate("created_by", "username")
+    .then(findCommentCounts)
+    .then(formatArticlesWithCommentCount)
+    .then(articles => {
+      if (!articles.length) return next({ status: 404 });
+      res.send({ articles });
+    })
+    .catch(next);
+};
 
 exports.addArticle = (req, res, next) => {
-  return User.findOne({username: {$eq: 'guest'}})
-  .then (guest => {
-    const newArticle = {
-      ...req.body,
-      created_by: req.body.username ? req.body.username : guest._id,
-      belongs_to: req.params.topic
-    }
-    return Article.create(newArticle)
-  })
-  .then(articleDoc => {
-    res.status(201).send(articleDoc)
-    return articleDoc.belongs_to
-  })
-  .then(articleTopic => {
-    return Topic.findOne({slug: articleTopic})
-  })
-  .then(existingTopic => {
-    if(!existingTopic) insertTopic(req.params.topic)
-  })
-  .catch(err => {
-    if(err.name === 'ValidationError') next({status: 400})
-    else next({status: 500})
-  })
-}
+  if (!req.body.title || !req.body.body) return next({ status: 400 });
 
-exports.addTopic = (req, res, next) =>{
+  return User.findOne({ username: { $eq: "guest" } })
+    .then(guest => {
+      const newArticle = {
+        ...req.body,
+        created_by: req.body.username ? req.body.username : guest._id,
+        belongs_to: req.params.topic
+      };
+      return Article.create(newArticle);
+    })
+    .then(articleDoc => {
+      res.status(201).send(articleDoc);
+      return articleDoc.belongs_to;
+    })
+    .then(articleTopic => {
+      return Topic.findOne({ slug: articleTopic });
+    })
+    .then(existingTopic => {
+      if (!existingTopic) insertTopic(req.params.topic);
+    })
+    .catch(next);
+};
+
+exports.addTopic = (req, res, next) => {
+  const { title } = req.body;
+
+  if (!title) return next({ status: 400 });
+
   insertTopic(req.body.title)
-  .then( topic => {
-    res.status(201).send(topic)
-  })
-  .catch(err => {
-    if(err.name === 'BulkWriteError' || err.name === 'ValidationError') next({status: 400})
-    else next({status: 500})
-  })
-}
+    .then(topic => {
+      res.status(201).send(topic);
+    })
+    .catch(next);
+};

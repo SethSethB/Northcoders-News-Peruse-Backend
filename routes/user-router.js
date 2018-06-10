@@ -1,14 +1,15 @@
-const router =require("express").Router()
+const router = require("express").Router();
 
-const { getUserbyId, getUsers, getArticlesByUser } = require('../controllers/user-controller')
+const {
+  getUserbyUsername,
+  getUsers,
+  getArticlesByUser
+} = require("../controllers/user-controller");
 
-router.route('/')
-  .get(getUsers)
+router.route("/").get(getUsers);
 
-router.route('/:username')
-  .get(getUserbyId)
+router.route("/:username").get(getUserbyUsername);
 
-router.route('/:username/articles')
-  .get(getArticlesByUser)
+router.route("/:username/articles").get(getArticlesByUser);
 
 module.exports = router;
