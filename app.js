@@ -3,13 +3,15 @@ const mongoose = require("mongoose");
 const { DB_URL } = process.env.DB_URL ? process.env : require("./config");
 const bodyParser = require("body-parser");
 const apiRouter = require("./routes/api-router");
-
-app.use(bodyParser.json());
+const cors = require("cors");
 
 mongoose
   .connect(DB_URL)
   .then(() => console.log(`Connected to ${DB_URL}`))
   .catch(err => console.log(err));
+
+app.use(cors());
+app.use(bodyParser.json());
 
 app.use("/api", apiRouter);
 
