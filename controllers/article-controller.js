@@ -8,7 +8,7 @@ const {
 exports.getArticles = (req, res, next) => {
   Article.find()
     .lean()
-    .populate("created_by", "username")
+    .populate("created_by")
     .then(findCommentCounts)
     .then(formatArticlesWithCommentCount)
     .then(articles => {
@@ -23,7 +23,7 @@ exports.getArticleById = (req, res, next) => {
     return next({ status: 400 });
   return Article.findById(article_id)
     .lean()
-    .populate("created_by", "username")
+    .populate("created_by")
     .then(article => {
       return findCommentCounts([article]);
     })
