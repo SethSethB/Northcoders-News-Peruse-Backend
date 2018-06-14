@@ -254,12 +254,12 @@ describe("/api", () => {
         });
     });
 
-    it('GET "/:article_id/comments" returns a 404 with message if no comments found', () => {
+    it('GET "/:article_id/comments" returns an empty array if no comments found', () => {
       return request
         .get("/api/articles/1b1cfd3f0790e1727a9eec3b/comments")
-        .expect(404)
+        .expect(200)
         .then(res => {
-          expect(res.body.message).to.equal("404 - Page Not Found");
+          expect(res.body.comments).to.eql([]);
         });
     });
 
