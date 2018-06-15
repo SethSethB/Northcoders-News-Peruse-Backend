@@ -33,11 +33,12 @@ exports.getArticlesByTopic = (req, res, next) => {
 exports.addArticle = (req, res, next) => {
   if (!req.body.title || !req.body.body) return next({ status: 400 });
 
-  return User.findOne({ username: { $eq: "guest" } })
-    .then(guest => {
+  const username = req.body.username || "guest";
+  return User.findOne({ username: { $eq: username } })
+    .then(user => {
       const newArticle = {
         ...req.body,
-        created_by: req.body.username ? req.body.username : guest._id,
+        created_by: req.body.username ? req.body.username : user._id,
         belongs_to: req.params.topic
       };
       return Article.create(newArticle);

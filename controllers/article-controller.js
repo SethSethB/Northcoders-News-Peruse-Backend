@@ -44,7 +44,6 @@ exports.getArticleComments = (req, res, next) => {
     .lean()
     .populate("created_by", "username")
     .then(comments => {
-      // if (!comments.length) return next({ status: 404 });
       res.send({ comments });
     })
     .catch(err => {
