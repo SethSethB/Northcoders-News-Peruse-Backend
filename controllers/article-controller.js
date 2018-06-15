@@ -62,7 +62,6 @@ exports.addCommentToArticle = (req, res, next) => {
   const username = postingUsername || "guest";
   return User.findOne({ username })
     .then(user => {
-      console.log(user);
       const newComment = {
         body: comment,
         created_by: user._id,
@@ -71,7 +70,6 @@ exports.addCommentToArticle = (req, res, next) => {
       return ArticleComment.create(newComment);
     })
     .then(commentDoc => {
-      console.log(commentDoc);
       res.status(201).send(commentDoc);
     })
     .catch(err => {
