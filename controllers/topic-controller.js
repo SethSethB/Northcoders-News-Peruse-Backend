@@ -34,13 +34,15 @@ exports.addArticle = (req, res, next) => {
   if (!req.body.title || !req.body.body) return next({ status: 400 });
 
   const username = req.body.username || "guest";
+
   return User.findOne({ username: { $eq: username } })
     .then(user => {
       const newArticle = {
         ...req.body,
-        created_by: req.body.username ? req.body.username : user._id,
+        created_by: user._id,
         belongs_to: req.params.topic
       };
+
       return Article.create(newArticle);
     })
     .then(articleDoc => {
