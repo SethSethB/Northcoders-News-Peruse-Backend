@@ -53,22 +53,25 @@ exports.getArticleComments = (req, res, next) => {
 };
 
 exports.addCommentToArticle = (req, res, next) => {
-  const { comment } = req.body;
+  const { comment, postingUsername } = req.body;
   const { belongs_to } = req.params;
 
   if (!comment || !mongoose.Types.ObjectId.isValid(belongs_to))
     return next({ status: 400 });
 
-  return User.findOne({ username: "guest" })
-    .then(guest => {
+  const username = postingUsername || "guest";
+  return User.findOne({ username })
+    .then(user => {
+      console.log(user);
       const newComment = {
         body: comment,
-        created_by: req.body.username ? req.body.username : guest._id,
+        created_by: user._id,
         belongs_to
       };
       return ArticleComment.create(newComment);
     })
     .then(commentDoc => {
+      console.log(commentDoc);
       res.status(201).send(commentDoc);
     })
     .catch(err => {
