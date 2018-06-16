@@ -20,7 +20,7 @@ exports.getArticlesByTopic = (req, res, next) => {
   const { topic } = req.params;
   return Article.find({ belongs_to: { $eq: topic } })
     .lean()
-    .populate("created_by", "username")
+    .populate("created_by")
     .then(findCommentCounts)
     .then(formatArticlesWithCommentCount)
     .then(articles => {
