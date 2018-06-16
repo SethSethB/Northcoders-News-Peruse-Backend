@@ -147,10 +147,10 @@ describe("/api", () => {
           expect(res.body.title).to.equal("Mitch is the best");
           expect(res.body.body).to.equal("I hope Sam doesnt read this");
           expect(res.body.votes).to.equal(0);
-          expect(res.body.belongs_to).to.equal("shinyNewTopic");
+          expect(res.body.belongs_to).to.equal("shinynewtopic");
           const guestUserId = `${users[2]._id}`;
           expect(res.body.created_by).to.equal(guestUserId);
-          return request.get("/api/topics/shinyNewTopic/articles").expect(200);
+          return request.get("/api/topics/shinynewtopic/articles").expect(200);
         })
         .then(res => {
           expect(res.body.articles.length).to.equal(1);
