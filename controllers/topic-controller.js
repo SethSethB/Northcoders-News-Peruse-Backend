@@ -40,7 +40,7 @@ exports.addArticle = (req, res, next) => {
       const newArticle = {
         ...req.body,
         created_by: user._id,
-        belongs_to: req.params.topic
+        belongs_to: req.params.topic.toLowerCase()
       };
 
       return Article.create(newArticle);
