@@ -19,13 +19,13 @@ You will need [node](https://nodejs.org/en/) and [mongo](https://docs.mongodb.co
 Clone this repository with the following terminal command:
 
 ```
-git clone https://github.com/SethSethB/BE-FT-northcoders-news.git
+git clone https://github.com/SethSethB/Northcoders-News-Peruse-Backend.git
 ```
 
-Change into the BE-FT-northcoders-news directory:
+Change into the Northcoders-News-Peruse-Backend directory:
 
 ```
-cd BE-FT-northcoders-news
+cd Northcoders-News-Peruse-Backend
 ```
 
 Now run the following command to install all dependencies:
